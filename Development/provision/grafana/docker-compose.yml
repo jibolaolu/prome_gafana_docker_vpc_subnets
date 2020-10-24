@@ -1,0 +1,9 @@
+version: "2"
+services:
+  grafana:
+    image: grafana/grafana:6.7.2
+    container_name: grafana1
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      

@@ -1,0 +1,9 @@
+version: '2'
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prom1
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+     
