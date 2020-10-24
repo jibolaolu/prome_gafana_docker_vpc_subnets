@@ -1,0 +1,49 @@
+{
+    "variables": {
+      "region": "eu-west-1"
+    },
+    "builders": [
+        {
+          "type": "amazon-ebs",
+          "access_key": "{{user `aws_access_key`}}",
+          "secret_key": "{{user `aws_secret_key`}}",
+          "region": "eu-west-1",
+          "source_ami": "ami-0bb3fad3c0286ebd5",
+          "instance_type": "t2.micro",
+          "ssh_username": "ec2-user",
+          "ami_name": "prometheus-ami-packer-{{timestamp}}"
+        }
+      ],
+      "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo yum update -y",
+              "sudo amazon-linux-extras install docker -y",
+              "sudo systemctl start docker",
+              "sudo systemctl enable docker",
+              "sudo usermod -aG docker ec2-user",
+             "sudo curl -L \"https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+             "sudo chmod +x /usr/local/bin/docker-compose",
+            "sudo cp /usr/local/bin/docker-compose /usr/bin/",
+            "sudo cp /usr/local/bin/docker-compose /home/ec2-user/"
+                  ]            
+          },
+          {
+            "type": "file",
+            "source": "../provision/prometheus/docker-compose.yml",
+            "destination": "/home/ec2-user/"     
+        },
+        {
+            "type": "shell",
+            "inline": [
+             "sudo docker-compose build",
+            "sudo docker-compose up -d"
+            ]
+        }
+       
+      ]
+    }
+       
+  
+  
